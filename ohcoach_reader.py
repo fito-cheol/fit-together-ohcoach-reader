@@ -42,6 +42,7 @@ user_input_command = ''
 
 
 def find_hub_com_port():
+    hub_port_name = ''
     for port in serial.tools.list_ports.comports():
         print(port.vid)
         print(port.device)
@@ -50,6 +51,10 @@ def find_hub_com_port():
             print("Find hub COM port")
             hub_port_name = port.device
             print(hub_port_name)
+    if hub_port_name == '':
+        print("Please make sure USB port is plug in.")
+        print("EXIT")
+        exit()
     return hub_port_name
 
 
@@ -128,7 +133,7 @@ def read_ohcoach_cells_ports_depend_on_os(hub_port_name):
         # this excludes your current terminal "/dev/tty"
         ports = glob.glob('/dev/tty[A-Za-z]*')
     elif os_system_flag == 3:
-        ports = glob.glob('/dev/tty.*')
+        ports = glob.glob('/dev/cu.*')
     else:
         raise EnvironmentError('Unsupported platform')
 
