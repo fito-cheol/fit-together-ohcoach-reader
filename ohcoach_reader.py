@@ -42,6 +42,7 @@ user_input_command = ''
 
 
 def find_hub_com_port():
+    hub_port_name = ''
     for port in serial.tools.list_ports.comports():
         print(port.vid)
         print(port.device)
@@ -50,6 +51,10 @@ def find_hub_com_port():
             print("Find hub COM port")
             hub_port_name = port.device
             print(hub_port_name)
+    if hub_port_name == '':
+        print("Please make sure USB port is plug in.")
+        print("EXIT")
+        exit()
     return hub_port_name
 
 
@@ -128,7 +133,7 @@ def read_ohcoach_cells_ports_depend_on_os(hub_port_name):
         # this excludes your current terminal "/dev/tty"
         ports = glob.glob('/dev/tty[A-Za-z]*')
     elif os_system_flag == 3:
-        ports = glob.glob('/dev/tty.*')
+        ports = glob.glob('/dev/cu.*')
     else:
         raise EnvironmentError('Unsupported platform')
 
@@ -329,7 +334,8 @@ if __name__ == '__main__':
     print("Code execution time :", time.time() - start)  # 현재시각 - 시작시간 = 실행 시간
 
     print("ALL process is END")
-    print("Command window is close after 10 seconds")
-    time.sleep(10) 
+    print("Close all cell ports and cmd window after 10 seconds")
+    time.sleep(10)
+    start_cell_check_is_port_open(hub_mcu_port, CELL_OFF_COMMAND)
 
 
