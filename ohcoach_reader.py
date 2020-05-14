@@ -88,27 +88,32 @@ def read_and_save_gps_data(port, filename_list):
     gps = bytes.fromhex(ohcoach_reader_constants.SYSCOMMAND_OLD_UPLOAD_GPS_DATA)
     ser.write(gps)
 
-    # TODO  읽는 부분과 쓰는 부분을 나눌 수 있음
     # jaeuk : data 읽으면서 동시에 기록하지 않으면 데이터가 누락이 생겨
     # serial port 상에서 임의의 딜레이를 추가해야 되어
     # 오히려 reading 시간이 늘어나 읽고 쓰기를 동시에 진행 했습니다.
+    # TODO list를 stringify 하면 ['filename'] 이라는 형식으로 출력됨 수정 필요
+    # TODO with statement를 이용해서 관리해주기 참고 https://twpower.github.io/17-with-usage-in-python
     f = open('gps_imu_data/%s.gp' % filename_list, mode='w+b')
     gps_data_reading_end_flag = 1
     while gps_data_reading_end_flag:
         data = ser.read(ohcoach_reader_constants.CELL_GPS_IMU_READ_CHUCK_SIZE)
         f.write(data)
         str_data = str(data)
+        # TODO != -1 을 넣을 필요 없음 -> if str_data.find(ohcoach_reader_constants.GPS_END_STR):
         if (str_data.find(ohcoach_reader_constants.GPS_END_STR)) != -1:
             print("Find GPSEND")
             gps_data_reading_end_flag = 0
     print(port + " GPS data save is done")
+    # TODO with statement를 이용해서 관리
     ser.close()
 
 
 def read_and_save_imu_data(port, filename_list):
     print(port + " Start reading IMU data")
+    # TODO with statement를 이용해서 관리
     ser = serial.Serial(port, ohcoach_reader_constants.BAUDRATE, timeout=0.1)
-
+    # TODO list를 stringify 하면 ['filename'] 이라는 형식으로 출력됨 수정필요
+    # TODO with statement를 이용해서 관리
     f = open('gps_imu_data/%s.im' % filename_list, mode='w+b')
     imu_cal = bytes.fromhex(ohcoach_reader_constants.SYSCOMMAND_SET_READ_IMU_CAL)
     ser.write(imu_cal)
@@ -126,6 +131,7 @@ def read_and_save_imu_data(port, filename_list):
         data = ser.read(ohcoach_reader_constants.CELL_GPS_IMU_READ_CHUCK_SIZE)
         f.write(data)
         str_data = str(data)
+        # TODO != -1 을 넣을 필요 없음
         if (str_data.find(ohcoach_reader_constants.IMU_END_STR)) != -1:
             print("Find IMUEND")
             imu_data_reading_end_flag = 0
@@ -155,7 +161,6 @@ if __name__ == '__main__':
     create_dir_if_not_exists(ohcoach_reader_constants.PATH_DATA_SAVE_DIR)
     start = time.time()
     if hub_command == ohcoach_reader_constants.CELL_OFF_COMMAND:
-        # TODO  transmit_command_to_hub_mcu 리턴값이 없는 이유
         # jaeuk : 이 경우는 cell 전체를 off 하는 경우이기 때문에 다음 프로세스를 진행하지 않고
         # 그대로 끝나기 때문에 리턴 값을 받지 않음
         transmit_command_to_hub_mcu(hub_mcu_port, hub_command)
@@ -163,15 +168,16 @@ if __name__ == '__main__':
     # TODO  hub command의 길이를 확인하는 이유
     # jaeuk: 테스트를 위해 사용자 input을 start / off / 1~6 line으로 한정 되었는데 off가 아닌 상태에서
     # 한 자리 숫자 길이 보다 큰 start 가 들어오면 reading을 진행
+    # TODO hub_command의 길이가 항상 2보다 크기 때문에 의미가 없음
     if len(hub_command) > 2:
         transmit_command_to_hub_mcu(hub_mcu_port, ohcoach_reader_constants.CELL_INIT_COMMAND)
-        # TODO 왜 6번 루프 도는지 궁금
-        # jaeuk : Ohcoach 덱의 라인이 총 6개 때문입니다.
+
+        # TODO range(0, ohcoach_reader_constants.TOTAL_DECK_LINE_NUMBER)가 필요없음
+        # TODO for command in hub_command: 로 고쳐야됨 (hub_command[i] -> command)
         for i in range(0, ohcoach_reader_constants.TOTAL_DECK_LINE_NUMBER):
-            # TODO 1초 슬립 쓰는 이유
-            # jaeuk : 라인이 바뀌는 와중에 USB 덱의 포트가 열리는 시간을 조금 벌어주기 위함으로 넣음
+            # 라인이 바뀌는 와중에 USB 덱의 포트가 열리는 시간을 조금 벌어주기 위함으로 넣음
             time.sleep(1)
-            # TODO  hub_command[i]가 의미하는 바는??
+
             # jaeuk : receive_user_input_command 에서 키보드로 start을 입력하면
             # line 1~6개의 cell line on command 들어감
             transmit_command_to_hub_mcu(hub_mcu_port, hub_command[i])
@@ -180,6 +186,7 @@ if __name__ == '__main__':
 
             list_ports = read_line_cell_ports.read_ports(hub_mcu_port)
             print(list_ports)
+
             list_ports_with_data, list_cell_serial_data, list_cell_firm_ver, list_day_month_year\
                 , list_mic_sec_min_hour, list_bad_block = making_filename.check_is_data_and_save_cell_filename(list_ports)
             print(list_ports_with_data, list_cell_serial_data, list_cell_firm_ver, list_day_month_year
