@@ -3,6 +3,9 @@ import ohcoach_reader_constants
 from datetime import datetime
 
 # TODO fileIO쪽보다 Cell 관련으로 묶어야 하는 함수
+# jaeuk : fileIO 쪽과 cell 관련 어떤 다름으로 정의되는지?
+# 각 cell에 serial 통신으로 명령을 보내서 fileIO에 필요한 값들(파일명)을 리턴하는 곳임
+
 def check_cell_has_data(usart):
     hex_buf = bytes.fromhex(ohcoach_reader_constants.SYSCOMMAND_UPLOAD_TOTAL_GPS_AND_IMU_SIZE)
     usart.write(hex_buf)
