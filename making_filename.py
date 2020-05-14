@@ -2,7 +2,7 @@ import serial
 import ohcoach_reader_constants
 from datetime import datetime
 
-
+# TODO fileIO쪽보다 Cell 관련으로 묶어야 하는 함수
 def check_cell_has_data(usart):
     hex_buf = bytes.fromhex(ohcoach_reader_constants.SYSCOMMAND_UPLOAD_TOTAL_GPS_AND_IMU_SIZE)
     usart.write(hex_buf)
@@ -14,7 +14,7 @@ def check_cell_has_data(usart):
 
     return sum_data
 
-
+# TODO fileIO쪽보다 Cell 관련으로 묶어야 하는 함수
 def get_hw_info(usart):
     hex_buf = bytes.fromhex(ohcoach_reader_constants.SYSCOMMAND_HW_INFORMATION)
     usart.write(hex_buf)
@@ -30,7 +30,7 @@ def get_hw_info(usart):
 
     return serial_number, firm_ver
 
-
+# TODO fileIO쪽보다 Cell 관련으로 묶어야 하는 함수
 def get_cell_badblock_number(usart):
     hex_buf = bytes.fromhex(ohcoach_reader_constants.SYSCMD_GET_BADBLOCK_NUMBER)
     usart.write(hex_buf)
