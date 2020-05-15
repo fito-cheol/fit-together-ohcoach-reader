@@ -2,10 +2,11 @@ import serial
 import ohcoach_reader_constants
 from datetime import datetime
 
-# TODO fileIO쪽보다 Cell 관련으로 묶어야 하는 함수
 # jaeuk : fileIO 쪽과 cell 관련 어떤 다름으로 정의되는지?
 # 각 cell에 serial 통신으로 명령을 보내서 fileIO에 필요한 값들(파일명)을 리턴하는 곳임
-
+# TODO 파일명이 making_filename이라서 함수가 맞지 않아서 분리해야했다고 생각했는데 분리할 필요 없을듯
+# TODO making_filename.py를 helper/cell_info.py로 그리고 하는김에
+# TODO read_line_cell_ports도 helper/cell_port.py 로 바꾸면 될거 같습니다
 def check_cell_has_data(usart):
     hex_buf = bytes.fromhex(ohcoach_reader_constants.SYSCOMMAND_UPLOAD_TOTAL_GPS_AND_IMU_SIZE)
     usart.write(hex_buf)
@@ -17,7 +18,6 @@ def check_cell_has_data(usart):
 
     return sum_data
 
-# TODO fileIO쪽보다 Cell 관련으로 묶어야 하는 함수
 def get_hw_info(usart):
     hex_buf = bytes.fromhex(ohcoach_reader_constants.SYSCOMMAND_HW_INFORMATION)
     usart.write(hex_buf)
@@ -33,7 +33,6 @@ def get_hw_info(usart):
 
     return serial_number, firm_ver
 
-# TODO fileIO쪽보다 Cell 관련으로 묶어야 하는 함수
 def get_cell_badblock_number(usart):
     hex_buf = bytes.fromhex(ohcoach_reader_constants.SYSCMD_GET_BADBLOCK_NUMBER)
     usart.write(hex_buf)
@@ -58,9 +57,22 @@ def get_time_when_file_create():
 
     return day_month_year, sec_min_hour
 
-
+# TODO 주석이랑 함수명이 filename을 만든다고 되어 있지만
+# TODO 나중에 저 데이터로 filename을 만들지 실제로 여기서 filename을 리턴하지 않음
+# TODO 셀에 데한 데이터들을 정리해서 리턴함 -- 주석, 함수명 변경필요
 # GPS / IMU 데이터가 있는지 없는지 체크한 다음 데이터가 있다면 파일명을 만들어준다.
 # 데이터가 없다면 return_no_data_port_list에 append
+# TODO return 값이 너무 많음 Cell이라는 class를 만들어서 관리
+'''
+class Cell:
+    def __init__(self, **kwarg):
+        self.port           = kwargs.get('port', None)
+        self.serial_num     = kwargs.get('serial_num', None)
+        self.bad_sector     = kwargs.get('bad_sector', None)
+        self.firm_ver       = kwargs.get('firm_ver', None)
+        self.day_month_year = kwargs.get('day_month_year', None)
+        self.sec_min_hour   = kwargs.get('sec_min_hour', None)
+'''
 def check_is_data_and_save_cell_filename(port_list):
     return_port_list = []
     return_no_data_port_list = []

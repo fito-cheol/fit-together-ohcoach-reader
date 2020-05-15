@@ -88,23 +88,29 @@ def read_and_save_gps_data(port, filename_list):
     gps = bytes.fromhex(ohcoach_reader_constants.SYSCOMMAND_OLD_UPLOAD_GPS_DATA)
     ser.write(gps)
 
-    # TODO list를 stringify 하면 ['filename'] 이라는 형식으로 출력됨 수정 필요
     # jaeuk : 여기서 직접 찍어서 확인해보니 string 으로 출력이 나옵니다.
+    # TODO 변수명 filename_list 에서 filename으로 수정
     print("jaeuk =", filename_list)
     # TODO with statement를 이용해서 관리해주기 참고 https://twpower.github.io/17-with-usage-in-python
     # jaeuk : 밑에 ser.close() 연관 지어진 것이라 with 문이 필요하지 않음
     # f.close() 는 사용되지 않은 상태임 마찬가지로 데이터를 읽으면서 쓰기 때문임
+    # TODO Q. with 대신에 close()문을 사용해야하는 이유가 있는지?
+    # TODO Q. f.close()는 사용하지 않는 이유가 있는지?
+    '''
+    다음과 같은 방식으로 관리하면 가독성이 좋을 것으로 생각함
+    https://stackoverflow.com/questions/3024925/create-a-with-block-on-several-context-managers
+    with A() as X, B() as Y, C() as Z:
+        do_something()
+    '''
     f = open('gps_imu_data/%s.gp' % filename_list, mode='w+b')
     gps_data_reading_end_flag = 1
     while gps_data_reading_end_flag:
         data = ser.read(ohcoach_reader_constants.CELL_GPS_IMU_READ_CHUCK_SIZE)
         f.write(data)
         str_data = str(data)
-        # TODO != -1 을 넣을 필요 없음 -> if str_data.find(ohcoach_reader_constants.GPS_END_STR):
         # jaeuk : find는 찾고자하는 문자열이 있으면 문자열의 시작 위치를 리턴하고
         # 원하는 문자열이 없을 시에 -1을 리턴하는데, if -1: 일 때도 if 문으로 들어가기 때문에
         # != -1 조건이 필요. 실제로 != -1 를 빼면 코드가 돌아가지 않음
-        # print("check END of line = ", str_data.find(ohcoach_reader_constants.GPS_END_STR))
         if (str_data.find(ohcoach_reader_constants.GPS_END_STR)) != -1:
             print("Find GPSEND")
             gps_data_reading_end_flag = 0
@@ -139,7 +145,6 @@ def read_and_save_imu_data(port, filename_list):
         data = ser.read(ohcoach_reader_constants.CELL_GPS_IMU_READ_CHUCK_SIZE)
         f.write(data)
         str_data = str(data)
-        # TODO != -1 을 넣을 필요 없음
         if (str_data.find(ohcoach_reader_constants.IMU_END_STR)) != -1:
             print("Find IMUEND")
             imu_data_reading_end_flag = 0
@@ -173,16 +178,8 @@ if __name__ == '__main__':
         # 그대로 끝나기 때문에 리턴 값을 받지 않음
         transmit_command_to_hub_mcu(hub_mcu_port, hub_command)
 
-    # TODO  hub command의 길이를 확인하는 이유
-    # jaeuk: 테스트를 위해 사용자 input을 start / off / 1~6 line으로 한정 되었는데 off가 아닌 상태에서
-    # 한 자리 숫자 길이 보다 큰 start 가 들어오면 reading을 진행
-    # TODO hub_command의 길이가 항상 2보다 크기 때문에 의미가 없음(done)
-
     transmit_command_to_hub_mcu(hub_mcu_port, ohcoach_reader_constants.CELL_INIT_COMMAND)
 
-    # TODO range(0, ohcoach_reader_constants.TOTAL_DECK_LINE_NUMBER)가 필요없음(done)
-    # TODO for command in hub_command: 로 고쳐야됨 (hub_command[i] -> command)(done)
-    #for i in range(0, ohcoach_reader_constants.TOTAL_DECK_LINE_NUMBER):
     for command in hub_command:
         # 라인이 바뀌는 와중에 USB 덱의 포트가 열리는 시간을 조금 벌어주기 위함으로 넣음
         time.sleep(1)
