@@ -2,14 +2,6 @@ import serial
 import ohcoach_reader_constants
 from datetime import datetime
 
-# jaeuk : fileIO 쪽과 cell 관련 어떤 다름으로 정의되는지?
-# 각 cell에 serial 통신으로 명령을 보내서 fileIO에 필요한 값들(파일명)을 리턴하는 곳임
-# TODO 파일명이 making_filename이라서 함수가 맞지 않아서 분리해야했다고 생각했는데 분리할 필요 없을듯
-# TODO(Jaeuk Done)
-# TODO making_filename.py를 helper/cell_info.py로 그리고 하는김에
-# TODO(Jaeuk Done)
-# TODO read_line_cell_ports도 helper/cell_port.py 로 바꾸면 될거 같습니다
-# TODO(Jaeuk Done)
 def check_cell_has_data(usart):
     hex_buf = bytes.fromhex(ohcoach_reader_constants.SYSCOMMAND_UPLOAD_TOTAL_GPS_AND_IMU_SIZE)
     usart.write(hex_buf)
@@ -67,14 +59,29 @@ def get_time_when_file_create():
 # 데이터가 없다면 return_no_data_port_list에 append
 # TODO return 값이 너무 많음 Cell이라는 class를 만들어서 관리
 '''
-class Cell:
+class CellLine:
     def __init__(self, **kwarg):
-        self.port           = kwargs.get('port', None)
-        self.serial_num     = kwargs.get('serial_num', None)
-        self.bad_sector     = kwargs.get('bad_sector', None)
-        self.firm_ver       = kwargs.get('firm_ver', None)
-        self.day_month_year = kwargs.get('day_month_year', None)
-        self.sec_min_hour   = kwargs.get('sec_min_hour', None)
+        self.port_list           = kwargs.get('port', None)
+        self.serial_num_list     = kwargs.get('serial_num', None)
+        self.bad_sector_list     = kwargs.get('bad_sector', None)
+        self.firm_ver_list       = kwargs.get('firm_ver', None)
+        self.day_month_year_list = kwargs.get('day_month_year', None)
+        self.sec_min_hour_list   = kwargs.get('sec_min_hour', None)
+        
+    def converge_filename(self):
+        retun filename_list
+        
+    def makeFiles(self):
+        executor.map(partial(read_and_save_gps_data), list_ports_with_data
+                             , filename_list)
+    
+    
+    def read_and_save_gps_data(self):
+        시리얼 통신
+        파일 만들고
+        저장
+        
+        
 '''
 def check_is_data_and_save_cell_filename(port_list):
     return_port_list = []

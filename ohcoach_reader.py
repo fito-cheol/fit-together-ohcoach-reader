@@ -81,74 +81,57 @@ def converge_filename(serial_num, firm_ver, day, sec, bad):
     return filename_list
 
 
-def read_and_save_gps_data(port, filename_list):
+def read_and_save_gps_data(port, filename):
     print(port + " Start reading GPS data")
-    ser = serial.Serial(port, ohcoach_reader_constants.BAUDRATE, timeout=0.1)
-    gps = bytes.fromhex(ohcoach_reader_constants.SYSCOMMAND_OLD_UPLOAD_GPS_DATA)
-    ser.write(gps)
+    with serial.Serial(port, ohcoach_reader_constants.BAUDRATE, timeout=0.1) as ser, \
+            open('gps_imu_data/%s.gp' % filename, mode='w+b') as f:
 
-    # jaeuk : 여기서 직접 찍어서 확인해보니 string 으로 출력이 나옵니다.
-    # TODO 변수명 filename_list 에서 filename으로 수정
-    print("jaeuk =", filename_list)
-    # TODO with statement를 이용해서 관리해주기 참고 https://twpower.github.io/17-with-usage-in-python
-    # jaeuk : 밑에 ser.close() 연관 지어진 것이라 with 문이 필요하지 않음
-    # f.close() 는 사용되지 않은 상태임 마찬가지로 데이터를 읽으면서 쓰기 때문임
-    # TODO Q. with 대신에 close()문을 사용해야하는 이유가 있는지?
-    # TODO Q. f.close()는 사용하지 않는 이유가 있는지?
-    '''
-    다음과 같은 방식으로 관리하면 가독성이 좋을 것으로 생각함
-    https://stackoverflow.com/questions/3024925/create-a-with-block-on-several-context-managers
-    with A() as X, B() as Y, C() as Z:
-        do_something()
-    '''
-    f = open('gps_imu_data/%s.gp' % filename_list, mode='w+b')
-    gps_data_reading_end_flag = 1
-    while gps_data_reading_end_flag:
-        data = ser.read(ohcoach_reader_constants.CELL_GPS_IMU_READ_CHUCK_SIZE)
-        f.write(data)
-        str_data = str(data)
-        # jaeuk : find는 찾고자하는 문자열이 있으면 문자열의 시작 위치를 리턴하고
-        # 원하는 문자열이 없을 시에 -1을 리턴하는데, if -1: 일 때도 if 문으로 들어가기 때문에
-        # != -1 조건이 필요. 실제로 != -1 를 빼면 코드가 돌아가지 않음
-        if (str_data.find(ohcoach_reader_constants.GPS_END_STR)) != -1:
-            print("Find GPSEND")
-            gps_data_reading_end_flag = 0
-    print(port + " GPS data save is done")
-    # TODO with statement를 이용해서 관리
-    ser.close()
+        gps = bytes.fromhex(ohcoach_reader_constants.SYSCOMMAND_OLD_UPLOAD_GPS_DATA)
+        ser.write(gps)
+
+        # jaeuk : 여기서 직접 찍어서 확인해보니 string 으로 출력이 나옵니다.
+        print("jaeuk =", filename)
+
+        gps_data_reading_end_flag = 1
+        while gps_data_reading_end_flag:
+            data = ser.read(ohcoach_reader_constants.CELL_GPS_IMU_READ_CHUCK_SIZE)
+            f.write(data)
+            str_data = str(data)
+            # jaeuk : find는 찾고자하는 문자열이 있으면 문자열의 시작 위치를 리턴하고
+            # 원하는 문자열이 없을 시에 -1을 리턴하는데, if -1: 일 때도 if 문으로 들어가기 때문에
+            # != -1 조건이 필요. 실제로 != -1 를 빼면 코드가 돌아가지 않음
+            if (str_data.find(ohcoach_reader_constants.GPS_END_STR)) != -1:
+                print("Find GPSEND")
+                gps_data_reading_end_flag = 0
+        print(port + " GPS data save is done")
 
 
-def read_and_save_imu_data(port, filename_list):
+def read_and_save_imu_data(port, filename):
     print(port + " Start reading IMU data")
-    # TODO with statement를 이용해서 관리
-    ser = serial.Serial(port, ohcoach_reader_constants.BAUDRATE, timeout=0.1)
-    # TODO list를 stringify 하면 ['filename'] 이라는 형식으로 출력됨 수정필요
-    # jaeuk : 여기서 직접 찍어서 확인해보니 string 으로 출력이 나옵니다.
-    print("jaeuk =", filename_list)
-    # TODO with statement를 이용해서 관리
+    print("jaeuk =", filename)
 
-    f = open('gps_imu_data/%s.im' % filename_list, mode='w+b')
-    imu_cal = bytes.fromhex(ohcoach_reader_constants.SYSCOMMAND_SET_READ_IMU_CAL)
-    ser.write(imu_cal)
-    imu_cal_data = ser.read(ohcoach_reader_constants.CELL_IMU_CAL_RESP_SIZE)
-    print(imu_cal_data)
-    imu_cal_data = imu_cal_data[5:-3]
-    f.write(imu_cal_data)
-    print("calibration data  = ", imu_cal_data)
+    with serial.Serial(port, ohcoach_reader_constants.BAUDRATE, timeout=0.1) as ser, \
+            open('gps_imu_data/%s.im' % filename, mode='w+b') as f:
+        imu_cal = bytes.fromhex(ohcoach_reader_constants.SYSCOMMAND_SET_READ_IMU_CAL)
+        ser.write(imu_cal)
+        imu_cal_data = ser.read(ohcoach_reader_constants.CELL_IMU_CAL_RESP_SIZE)
+        print(imu_cal_data)
+        imu_cal_data = imu_cal_data[5:-3]
+        f.write(imu_cal_data)
+        print("calibration data  = ", imu_cal_data)
 
-    imu = bytes.fromhex(ohcoach_reader_constants.SYSCOMMAND_OLD_UPLOAD_IMU_DATA)
-    ser.write(imu)
-    imu_data_reading_end_flag = 1
+        imu = bytes.fromhex(ohcoach_reader_constants.SYSCOMMAND_OLD_UPLOAD_IMU_DATA)
+        ser.write(imu)
+        imu_data_reading_end_flag = 1
 
-    while imu_data_reading_end_flag:
-        data = ser.read(ohcoach_reader_constants.CELL_GPS_IMU_READ_CHUCK_SIZE)
-        f.write(data)
-        str_data = str(data)
-        if (str_data.find(ohcoach_reader_constants.IMU_END_STR)) != -1:
-            print("Find IMUEND")
-            imu_data_reading_end_flag = 0
-    print(port + " IMU data save is done")
-    ser.close()
+        while imu_data_reading_end_flag:
+            data = ser.read(ohcoach_reader_constants.CELL_GPS_IMU_READ_CHUCK_SIZE)
+            f.write(data)
+            str_data = str(data)
+            if (str_data.find(ohcoach_reader_constants.IMU_END_STR)) != -1:
+                print("Find IMUEND")
+                imu_data_reading_end_flag = 0
+        print(port + " IMU data save is done")
 
 # jaeuk :  코드가 마무리 되면 erase 함수 추가 예정
 '''
