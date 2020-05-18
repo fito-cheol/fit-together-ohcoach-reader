@@ -68,7 +68,7 @@ def transmit_command_to_hub_mcu(hub_port, COMMAND):
     print(in_bin.decode('utf-8'))
 
 
-def converge_filename(serial_num, firm_ver, day, sec, bad):
+def make_filename(serial_num, firm_ver, day, sec, bad):
     filename = ''
     filename_list = []
     print(len(serial_num))
@@ -155,13 +155,15 @@ if __name__ == '__main__':
     hub_command = receive_user_input_command("Enter 'start' OR 'off'")
     create_dir_if_not_exists(ohcoach_reader_constants.PATH_DATA_SAVE_DIR)
     start = time.time()
-    if hub_command == ohcoach_reader_constants.CELL_OFF_COMMAND:
+    is_off = hub_command == ohcoach_reader_constants.CELL_OFF_COMMAND
+    if is_off:
         # jaeuk : 이 경우는 cell 전체를 off 하는 경우이기 때문에 다음 프로세스를 진행하지 않고
         # 그대로 끝나기 때문에 리턴 값을 받지 않음
         transmit_command_to_hub_mcu(hub_mcu_port, hub_command)
 
     transmit_command_to_hub_mcu(hub_mcu_port, ohcoach_reader_constants.CELL_INIT_COMMAND)
 
+    # start 일경우
     for command in hub_command:
         time.sleep(1)
 
@@ -179,7 +181,7 @@ if __name__ == '__main__':
         print(list_ports_with_data, list_cell_serial_data, list_cell_firm_ver, list_day_month_year
               , list_mic_sec_min_hour, list_bad_block)
 
-        filename_list = converge_filename(list_cell_serial_data, list_cell_firm_ver, list_day_month_year,
+        filename_list = make_filename(list_cell_serial_data, list_cell_firm_ver, list_day_month_year,
                                       list_mic_sec_min_hour, list_bad_block)
         print("Main filename = ", filename_list)
 
