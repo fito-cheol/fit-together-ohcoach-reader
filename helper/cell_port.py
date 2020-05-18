@@ -91,6 +91,3 @@ def get_hub_com_port(target_vendor_id):
         exit()
     return hub_port_name
 
-def some(hub_mcu_port):
-    return serial.Serial(hub_mcu_port, BAUDRATE)
-
