@@ -3,12 +3,11 @@ import time
 import serial
 import concurrent.futures
 from functools import partial
-from datetime import datetime
 import serial.tools.list_ports
 
 import ohcoach_reader_constants
-import read_line_cell_ports
-import making_filename
+from helper import cell_info, cell_port
+
 
 #TODO: 싱글 커맨드 보낼때 씹히는것 고려해서 리스폰 없으면 3번 더 보내기
 
@@ -181,7 +180,6 @@ if __name__ == '__main__':
     transmit_command_to_hub_mcu(hub_mcu_port, ohcoach_reader_constants.CELL_INIT_COMMAND)
 
     for command in hub_command:
-        # 라인이 바뀌는 와중에 USB 덱의 포트가 열리는 시간을 조금 벌어주기 위함으로 넣음
         time.sleep(1)
 
         # jaeuk : receive_user_input_command 에서 키보드로 start을 입력하면
@@ -190,11 +188,11 @@ if __name__ == '__main__':
         print("Waiting to opening port....")
         time.sleep(ohcoach_reader_constants.CELL_BOOT_COM_PORT_OPEN_TIME)
 
-        list_ports = read_line_cell_ports.read_ports_compatible_os_system(hub_mcu_port)
+        list_ports = cell_port.read_ports_compatible_os_system(hub_mcu_port)
         print(list_ports)
 
         list_ports_with_data, list_cell_serial_data, list_cell_firm_ver, list_day_month_year\
-            , list_mic_sec_min_hour, list_bad_block = making_filename.check_is_data_and_save_cell_filename(list_ports)
+            , list_mic_sec_min_hour, list_bad_block = cell_info.check_is_data_and_save_cell_filename(list_ports)
         print(list_ports_with_data, list_cell_serial_data, list_cell_firm_ver, list_day_month_year
               , list_mic_sec_min_hour, list_bad_block)
 

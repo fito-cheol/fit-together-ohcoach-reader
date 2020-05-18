@@ -5,8 +5,11 @@ from datetime import datetime
 # jaeuk : fileIO 쪽과 cell 관련 어떤 다름으로 정의되는지?
 # 각 cell에 serial 통신으로 명령을 보내서 fileIO에 필요한 값들(파일명)을 리턴하는 곳임
 # TODO 파일명이 making_filename이라서 함수가 맞지 않아서 분리해야했다고 생각했는데 분리할 필요 없을듯
+# TODO(Jaeuk Done)
 # TODO making_filename.py를 helper/cell_info.py로 그리고 하는김에
+# TODO(Jaeuk Done)
 # TODO read_line_cell_ports도 helper/cell_port.py 로 바꾸면 될거 같습니다
+# TODO(Jaeuk Done)
 def check_cell_has_data(usart):
     hex_buf = bytes.fromhex(ohcoach_reader_constants.SYSCOMMAND_UPLOAD_TOTAL_GPS_AND_IMU_SIZE)
     usart.write(hex_buf)
@@ -103,6 +106,5 @@ def check_is_data_and_save_cell_filename(port_list):
             print("No data port :", check_port)
             return_no_data_port_list.append(check_port)
     print("No data port list = ", return_no_data_port_list)
-        # Returns only ports with filename data
     return return_port_list, return_cell_serial_num_list, return_cell_firm_ver, return_cell_day_month_year\
         , return_cell_millisec_sec_min_hour, return_cell_bad_sector_num
