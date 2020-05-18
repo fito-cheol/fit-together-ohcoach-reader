@@ -30,8 +30,6 @@ if __name__ == '__main__':
 
     is_processing = True
 
-    objectUI.find_dock()
-
     if is_processing:
         objectUI.processing_dock()
     else:

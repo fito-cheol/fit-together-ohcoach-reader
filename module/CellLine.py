@@ -5,30 +5,31 @@ from functools import partial
 from common.ohcoach_reader_constants import *
 from helper import cell_info
 
-
-# TODO start 여러번 반복될 때 초기화 해주는 지점이 필요
 class CellLine:
 
     def __init__(self, **kwargs):
         self.line_number = kwargs.get('line_number', None)
         self.start_read_command = START_READ_WHOLE_CELL_DATA[self.line_number]
 
-        # TODO start 여러번 반복될 때 초기화 해주는 지점이 필요
-        self.port_list = kwargs.get('port', None)
-        self.serial_num_list = kwargs.get('serial_num', None)
-        self.bad_sector_list = kwargs.get('bad_sector', None)
-        self.firm_ver_list = kwargs.get('firm_ver', None)
-        self.day_month_year_list = kwargs.get('day_month_year', None)
-        self.sec_min_hour_list = kwargs.get('sec_min_hour', None)
+        self.port_list = []
+        self.serial_num_list = []
+        self.bad_sector_list = []
+        self.firm_ver_list = []
+        self.day_month_year_list = []
+        self.sec_min_hour_list = []
 
-        # TODO start 여러번 반복될 때 초기화 해주는 지점이 필요
         self.yes_data_port_list = []
         self.no_data_port_list = []
 
-        # TODO start 여러번 반복될 때 초기화 해주는 지점이 필요
         self.filename_list = []
         
     def make_filename(self):
+        self.serial_num_list = []
+        self.bad_sector_list = []
+        self.firm_ver_list = []
+        self.day_month_year_list = []
+        self.sec_min_hour_list = []
+
         filename_list = []
 
         for serial_num, firm_ver, day_month_year, sec_min_hour, bad \
@@ -42,6 +43,8 @@ class CellLine:
         self.filename_list = filename_list
 
     def read_hw_info(self):
+        self.yes_data_port_list = []
+        self.no_data_port_list = []
 
         for current_cell_port in self.port_list:
 
