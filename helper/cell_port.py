@@ -74,3 +74,21 @@ def read_ports_compatible_os_system(hub_port_name):
     cell_ports_base_on_hub_port = get_cell_ports_from_hub_mcu(os_system_flag, hub_port_name, open_done_port)
 
     return cell_ports_base_on_hub_port
+
+def get_hub_com_port(target_vendor_id):
+    hub_port_name = ''
+    for port in serial.tools.list_ports.comports():
+        print(port.vid)
+        print(port.device)
+        print(port.pid)
+        if port.vid == target_vendor_id:
+            print("Find hub COM port")
+            hub_port_name = port.device
+            print(hub_port_name)
+    if hub_port_name == '':
+        print("Please make sure USB port is plug in.")
+        print("EXIT")
+        exit()
+    return hub_port_name
+
+
