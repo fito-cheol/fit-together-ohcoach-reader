@@ -1,6 +1,7 @@
 import glob
 import sys
 import serial
+import serial.tools.list_ports
 
 # WINDOWS = 1, LINUX & CYGWIN = 2, macOS = 3
 def get_os_system_flag():
@@ -51,6 +52,8 @@ def is_port_open(ports):
 # Ex : 두 번째 라인에 cell 3개만 있는 상태면 windows에서 COM3, COM4, COM6 처럼
 # 이름을 리턴
 def get_cell_ports_from_hub_mcu(os_system_flag, hub_port, open_done_port):
+    print("getcell", hub_port)
+    print("getcell open done", open_done_port)
     if os_system_flag == 1:
         start_index = open_done_port.index(hub_port)
         cell_ports_base_on_hub_port = open_done_port[start_index+1:start_index+7]
@@ -70,6 +73,7 @@ def read_ports_compatible_os_system(hub_port_name):
     print(hub_port_name)
     print("Read all cell ports")
     ports = get_os_system_port_list(os_system_flag)
+    print(ports)
     open_done_port = is_port_open(ports)
     cell_ports_base_on_hub_port = get_cell_ports_from_hub_mcu(os_system_flag, hub_port_name, open_done_port)
 

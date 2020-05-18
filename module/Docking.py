@@ -14,21 +14,19 @@ class Docking:
         self.hub_mcu_port = get_hub_com_port(TARGET_PORT_VENDOR_ID)
         self.transmit_command_to_hub_mcu(CELL_INIT_COMMAND)
         print("Hub port = ", self.hub_mcu_port)
-        self.hub_mcu_uart = serial.Serial(self.hub_mcu_port , BAUDRATE)
 
         self.cell_line_list = []
         for i in range(TOTAL_DECK_LINE_NUMBER):
-            self.cell_line_list.append(CellLine(i))
+            self.cell_line_list.append(CellLine(line_number=i))
 
     def transmit_command_to_hub_mcu(self, command):
-
+        self.hub_mcu_uart = serial.Serial(self.hub_mcu_port, BAUDRATE)
         # EXECUTE CELL INIT
         hub = bytes.fromhex(command)
         self.hub_mcu_uart.write(hub)
         if command == CELL_OFF_COMMAND:
             print("Close all port...")
             in_bin = self.hub_mcu_uart.read(10)
-            in_bin = in_bin.decode()
             print(in_bin)
         elif command == CELL_INIT_COMMAND:
             in_bin = self.hub_mcu_uart.read(27)
@@ -36,6 +34,7 @@ class Docking:
             in_bin = self.hub_mcu_uart.read(23)
 
         print(in_bin.decode('utf-8'))
+        self.hub_mcu_uart.close()
 
     def processing_dock(self):
 
@@ -47,11 +46,9 @@ class Docking:
 
             print("Cell booting, Opening port ....")
             time.sleep(CELL_BOOT_COM_PORT_OPEN_TIME)
-
             # TODO 한줄로 합치기
             list_ports = cell_port.read_ports_compatible_os_system(self.hub_mcu_port)
             cell_line.port_list = list_ports
-            print(list_ports)
 
             cell_line.read_hw_info()
 

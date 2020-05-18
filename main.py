@@ -28,12 +28,9 @@ def create_dir_if_not_exists(directory):
 if __name__ == '__main__':
     objectUI = UserInterface()
 
-    is_processing = True
+    objectUI.processing_dock()
 
-    if is_processing:
-        objectUI.processing_dock()
-    else:
-        objectUI.off_dock()
+    objectUI.off_dock()
 
 
 

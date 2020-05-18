@@ -24,11 +24,11 @@ class CellLine:
         self.filename_list = []
         
     def make_filename(self):
-        self.serial_num_list = []
-        self.bad_sector_list = []
-        self.firm_ver_list = []
-        self.day_month_year_list = []
-        self.sec_min_hour_list = []
+        # self.serial_num_list = []
+        # self.bad_sector_list = []
+        # self.firm_ver_list = []
+        # self.day_month_year_list = []
+        # self.sec_min_hour_list = []
 
         filename_list = []
 
@@ -45,6 +45,7 @@ class CellLine:
     def read_hw_info(self):
         self.yes_data_port_list = []
         self.no_data_port_list = []
+        print("read_saldfjslkjf = ", self.port_list)
 
         for current_cell_port in self.port_list:
 
@@ -60,7 +61,6 @@ class CellLine:
                 # "시리얼번호_펌웨어 버전_스타트타임_badblock_개수.gp .imu"
 
                 self.serial_num_list.append(serial_number)
-
                 self.firm_ver_list.append(firm_ver)
                 self.day_month_year_list.append(day_month_year)
                 self.sec_min_hour_list.append(sec_min_hour)
@@ -70,6 +70,8 @@ class CellLine:
             else:
                 print("No data port :", current_cell_port)
                 self.no_data_port_list.append(current_cell_port)
+        print(self.serial_num_list)
+        print("yes data port list = ", self.yes_data_port_list)
         print("No data port list = ", self.no_data_port_list)
 
     def make_gp_file(self):
