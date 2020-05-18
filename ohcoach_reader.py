@@ -5,7 +5,7 @@ import concurrent.futures
 from functools import partial
 import serial.tools.list_ports
 
-import ohcoach_reader_constants
+from common import ohcoach_reader_constants
 from helper import cell_info, cell_port
 
 

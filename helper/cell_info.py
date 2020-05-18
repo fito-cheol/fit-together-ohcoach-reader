@@ -1,5 +1,5 @@
 import serial
-import ohcoach_reader_constants
+from common import ohcoach_reader_constants
 from datetime import datetime
 
 def check_cell_has_data(usart):

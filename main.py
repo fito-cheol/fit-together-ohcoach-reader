@@ -1,9 +1,6 @@
 import os
-import serial
 
-from helper import cell_info, cell_port
-
-from ohcoach_reader_constants import *
+from common.ohcoach_reader_constants import *
 from module.Docking import Docking
 
 
