@@ -11,6 +11,7 @@ from module.CellLine import CellLine
 class Docking:
 
     def __init__(self):
+        self.each_lines_is_data_serial_num = [[0 for col in range(2)] for row in range(6)]
         self.hub_mcu_port = get_hub_com_port(TARGET_PORT_VENDOR_ID)
         self.transmit_command_to_hub_mcu(CELL_INIT_COMMAND)
         print("Hub port = ", self.hub_mcu_port)
@@ -36,9 +37,15 @@ class Docking:
         print(in_bin.decode('utf-8'))
         self.hub_mcu_uart.close()
 
-    def processing_dock(self):
+    def yes_no_data_port_list(self):
+        return
 
-        for cell_line in self.cell_line_list:
+    def processing_dock(self, file_save_path, line_process_index):
+        print("processing_dock = ", file_save_path)
+        if (line_process_index + 1):
+            print("True")
+            cell_line = self.cell_line_list[line_process_index]
+            print(cell_line)
             print("Waiting for Line Change")
             time.sleep(CELL_LINE_CHANGE_TIME)
 
@@ -50,17 +57,60 @@ class Docking:
             list_ports = cell_port.read_ports_compatible_os_system(self.hub_mcu_port)
             cell_line.port_list = list_ports
 
-            cell_line.read_hw_info()
+            # 각각의 셀이 gps/imu 데이터가 있는지 없는지 체크한 다음
+            # 데이터가 있으면 cell 정보를 파일명으로 쓰기 위한 데이터를 만든다.
+            serial_num_list, no_data_serial_num_list = cell_line.read_hw_info()
 
             # TODO makefilename CellLine에서 가져와서 쓰기
             cell_line.make_filename()
             print("Main filename = ", cell_line.filename_list)
-
+            print("processing_dock = ", file_save_path)
+            start = time.time()
             print("---------------------Save GPS data---------------------")
-            cell_line.make_gp_file()
+            cell_line.make_gp_file(file_save_path)
 
             print("---------------------Save IMU data---------------------")
-            cell_line.make_imu_file()
+            cell_line.make_imu_file(file_save_path)
+            print("Code execution time :", time.time() - start)  # 현재시각 - 시작시간 = 실행 시간
+            self.each_lines_is_data_serial_num[line_process_index] = \
+                [serial_num_list, no_data_serial_num_list]
+            print("processing_dock", self.each_lines_is_data_serial_num)
+        else:
+            print("False")
+            for cell_line in self.cell_line_list:
+                print(self.cell_line_list.index(cell_line))
+                print("Waiting for Line Change")
+                time.sleep(CELL_LINE_CHANGE_TIME)
+
+                self.transmit_command_to_hub_mcu(cell_line.start_read_command)
+
+                print("Cell booting, Opening port ....")
+                time.sleep(CELL_BOOT_COM_PORT_OPEN_TIME)
+                # TODO 한줄로 합치기
+                list_ports = cell_port.read_ports_compatible_os_system(self.hub_mcu_port)
+                cell_line.port_list = list_ports
+
+                # 각각의 셀이 gps/imu 데이터가 있는지 없는지 체크한 다음
+                # 데이터가 있으면 cell 정보를 파일명으로 쓰기 위한 데이터를 만든다.
+                serial_num_list, no_data_serial_num_list = cell_line.read_hw_info()
+
+                # TODO makefilename CellLine에서 가져와서 쓰기
+                cell_line.make_filename()
+                print("Main filename = ", cell_line.filename_list)
+                print("processing_dock = ", file_save_path)
+                start = time.time()
+                print("---------------------Save GPS data---------------------")
+                cell_line.make_gp_file(file_save_path)
+
+                print("---------------------Save IMU data---------------------")
+                cell_line.make_imu_file(file_save_path)
+                print("Code execution time :", time.time() - start)  # 현재시각 - 시작시간 = 실행 시간
+                self.each_lines_is_data_serial_num[self.cell_line_list.index(cell_line)] = \
+                    [serial_num_list, no_data_serial_num_list]
+            print("processing_dock", self.each_lines_is_data_serial_num)
+        return self.each_lines_is_data_serial_num
+    #def get_yes_no_data_serial_num_list(self):
+
 
     def off_dock(self):
         self.transmit_command_to_hub_mcu(CELL_OFF_COMMAND)

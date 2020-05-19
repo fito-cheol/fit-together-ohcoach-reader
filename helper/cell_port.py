@@ -73,7 +73,6 @@ def read_ports_compatible_os_system(hub_port_name):
     print(hub_port_name)
     print("Read all cell ports")
     ports = get_os_system_port_list(os_system_flag)
-    print(ports)
     open_done_port = is_port_open(ports)
     cell_ports_base_on_hub_port = get_cell_ports_from_hub_mcu(os_system_flag, hub_port_name, open_done_port)
 
