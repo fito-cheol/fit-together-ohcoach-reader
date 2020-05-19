@@ -20,6 +20,7 @@ class CellLine:
 
         self.yes_data_port_list = []
         self.no_data_port_list = []
+        self.no_data_serial_num_list = []
 
         self.filename_list = []
         
@@ -45,7 +46,6 @@ class CellLine:
     def read_hw_info(self):
         self.yes_data_port_list = []
         self.no_data_port_list = []
-        print("read_saldfjslkjf = ", self.port_list)
 
         for current_cell_port in self.port_list:
 
@@ -66,34 +66,41 @@ class CellLine:
                 self.sec_min_hour_list.append(sec_min_hour)
                 self.bad_sector_list.append(bad_sector_num)
 
+                print("yes data port = ", current_cell_port)
                 self.yes_data_port_list.append(current_cell_port)
             else:
+                serial_number, firm_ver = cell_info.get_hw_info(usart)
                 print("No data port :", current_cell_port)
                 self.no_data_port_list.append(current_cell_port)
-        print(self.serial_num_list)
-        print("yes data port list = ", self.yes_data_port_list)
-        print("No data port list = ", self.no_data_port_list)
+                self.no_data_serial_num_list.append(serial_number)
+        print("yes data serial num list= ", self.serial_num_list)
+        print("No data serial num list = ", self.no_data_serial_num_list)
+        return self.serial_num_list, self.no_data_serial_num_list
 
-    def make_gp_file(self):
+    def make_gp_file(self, file_save_path):
+        print(len(self.yes_data_port_list))
+        for i in range(len(self.yes_data_port_list) - 1):
+            file_save_path.append(file_save_path[0])
+        print(file_save_path)
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            executor.map(partial(self.read_and_save_gps_data), self.yes_data_port_list
-                         , self.filename_list)
+            executor.map(partial(self.read_and_save_gps_data), self.yes_data_port_list,
+                         file_save_path, self.filename_list)
 
-    def make_imu_file(self):
+    def make_imu_file(self, file_save_path):
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            executor.map(partial(self.read_and_save_imu_data), self.yes_data_port_list
-                         , self.filename_list)
+            executor.map(partial(self.read_and_save_imu_data), self.yes_data_port_list,
+                         file_save_path, self.filename_list)
 
     @staticmethod
-    def read_and_save_gps_data(port, filename):
+    def read_and_save_gps_data(port, file_save_path, filename):
         print(port + " Start reading GPS data")
+        print(file_save_path)
         with serial.Serial(port, BAUDRATE, timeout=0.1) as ser, \
-                open('gps_imu_data/%s.gp' % filename, mode='w+b') as f:
+                open('%s/%s.gp' % (file_save_path, filename), mode='w+b') as f:
 
             gps = bytes.fromhex(SYSCOMMAND_OLD_UPLOAD_GPS_DATA)
             ser.write(gps)
 
-            # jaeuk : 여기서 직접 찍어서 확인해보니 string 으로 출력이 나옵니다.
             print("jaeuk =", filename)
 
             gps_data_reading_end_flag = 1
@@ -101,21 +108,19 @@ class CellLine:
                 data = ser.read(CELL_GPS_IMU_READ_CHUCK_SIZE)
                 f.write(data)
                 str_data = str(data)
-                # jaeuk : find는 찾고자하는 문자열이 있으면 문자열의 시작 위치를 리턴하고
-                # 원하는 문자열이 없을 시에 -1을 리턴하는데, if -1: 일 때도 if 문으로 들어가기 때문에
-                # != -1 조건이 필요. 실제로 != -1 를 빼면 코드가 돌아가지 않음
+
                 if (str_data.find(GPS_END_STR)) != -1:
                     print("Find GPSEND")
                     gps_data_reading_end_flag = 0
             print(port + " GPS data save is done")
 
     @staticmethod
-    def read_and_save_imu_data(port, filename):
+    def read_and_save_imu_data(port, file_save_path, filename):
         print(port + " Start reading IMU data")
         print("jaeuk =", filename)
 
         with serial.Serial(port, BAUDRATE, timeout=0.1) as ser, \
-                open('gps_imu_data/%s.im' % filename, mode='w+b') as f:
+                open('%s/%s.im' % (file_save_path, filename), mode='w+b') as f:
             imu_cal = bytes.fromhex(SYSCOMMAND_SET_READ_IMU_CAL)
             ser.write(imu_cal)
             imu_cal_data = ser.read(CELL_IMU_CAL_RESP_SIZE)

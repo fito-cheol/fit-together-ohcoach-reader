@@ -3,7 +3,7 @@
 """
 ohcoach_reader_constants.py
 """
-PATH_DATA_SAVE_DIR = "gps_imu_data"
+NAME_DATA_SAVE_DIR = "gps_imu_data"
 GPS_END_STR = "GPSEND"
 IMU_END_STR = "IMUEND"
 
