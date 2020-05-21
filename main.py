@@ -1,8 +1,8 @@
 import os
 import pprint
 
-from common.ohcoach_reader_constants import *
-from module.Docking import Docking
+from .common.ohcoach_reader_constants import *
+from .module.Docking import Docking
 
 
 class UserInterface:
