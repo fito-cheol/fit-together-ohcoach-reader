@@ -2,8 +2,8 @@ import time, serial
 import concurrent.futures
 from functools import partial
 
-from common.ohcoach_reader_constants import *
-from helper import cell_info
+from ..common.ohcoach_reader_constants import *
+from ..helper import cell_info
 
 class CellLine:
 

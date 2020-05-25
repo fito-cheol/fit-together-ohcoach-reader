@@ -92,5 +92,7 @@ def get_hub_com_port(target_vendor_id):
         print("Please make sure USB port is plug in.")
         print("EXIT")
         exit()
+        # TODO exit() 하면 프로그램이 죽음, exception을 return 해줘야함
+
     return hub_port_name
 

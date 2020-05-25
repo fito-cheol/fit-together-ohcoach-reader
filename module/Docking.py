@@ -2,10 +2,10 @@ import time, serial
 import concurrent.futures
 from functools import partial
 
-from common.ohcoach_reader_constants import *
-from helper.cell_port import get_hub_com_port
-from helper import cell_info, cell_port
-from module.CellLine import CellLine
+from ..common.ohcoach_reader_constants import *
+from ..helper.cell_port import get_hub_com_port
+from ..helper import cell_info, cell_port
+from ..module.CellLine import CellLine
 
 
 class Docking:

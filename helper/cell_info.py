@@ -1,5 +1,5 @@
 from datetime import datetime
-from common.ohcoach_reader_constants import *
+from ..common.ohcoach_reader_constants import *
 
 
 def check_cell_has_data(usart):
