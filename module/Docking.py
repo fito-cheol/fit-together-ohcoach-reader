@@ -11,7 +11,7 @@ from ..module.CellLine import CellLine
 class Docking:
 
     def __init__(self):
-        self.open_closed_serial_per_line = [[0 for col in range(2)] for row in range(6)]
+        self.open_closed_serial_per_line = [[[] for col in range(2)] for row in range(6)]
         self.hub_mcu_port = get_hub_com_port(TARGET_PORT_VENDOR_ID)
         self.transmit_command_to_hub_mcu(CELL_INIT_COMMAND)
         print("Hub port = ", self.hub_mcu_port)

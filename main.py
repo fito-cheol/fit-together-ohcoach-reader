@@ -23,18 +23,7 @@ class UserInterface:
     #      기능이 한 함수에 여러개가 들어가있으므로 분리할 것 - processing_dock, get_dock_status
     def processing_dock(self, line_process_index):
         open_closed_serial_per_line = self.docking.processing_dock(self._file_save_path, line_process_index)
-        # TODO 읽은 line과 안 읽은 line의 결과 값의 형식이 다름
-        #
         '''
-         2번 줄만 읽었을 때 결과
-         
-                1번        2번        3번     4번     5번      6번
-              [[0, 0], [['5'], []], [0, 0], [0, 0], [0, 0], [0, 0]]
-              
-              문제1 
-              읽지 않은 line(Default)은 int, 
-              읽은 line은 string list or empty list
-              
               문제2
               CLBX-24434를 읽었었는데 결과값으로 5가 나왔음 시리얼번호가 맞는지 확인  
               
