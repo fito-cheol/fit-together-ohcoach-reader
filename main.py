@@ -9,7 +9,7 @@ class UserInterface:
 
     def __init__(self):
         self.docking = Docking()
-        self._file_save_path = os.path.abspath(__file__) + '/data'
+        self._file_save_path = os.path.dirname(os.path.abspath(__file__)) + '/data'
         create_dir_if_not_exists(self._file_save_path)
 
     def get_file_data_path(self):
