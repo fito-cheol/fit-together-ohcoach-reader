@@ -12,7 +12,7 @@ class UserInterface:
         self.file_save_path = os.path.abspath(__file__) + '/data'
         create_dir_if_not_exists(self.file_save_path)
 
-    # TODO return 값이 필요없는 함수
+    # TODO dir 생성을 할 필요가 없고 list형식으로 저장할 필요도 없음
     def get_file_data_path(self, dir_path):
         create_dir_if_not_exists(dir_path)
         self.file_save_path.append(dir_path)
