@@ -9,15 +9,15 @@ class UserInterface:
 
     def __init__(self):
         self.docking = Docking()
-        self.file_save_path = os.path.abspath(__file__) + '/data'
-        create_dir_if_not_exists(self.file_save_path)
+        self._file_save_path = os.path.abspath(__file__) + '/data'
+        create_dir_if_not_exists(self._file_save_path)
 
-    # TODO dir 생성을 할 필요가 없고 list형식으로 저장할 필요도 없음
-    def get_file_data_path(self, dir_path):
+    def get_file_data_path(self):
+        return self._file_save_path
+
+    def set_file_save_path(self, dir_path):
         create_dir_if_not_exists(dir_path)
-        self.file_save_path.append(dir_path)
-        print(self.file_save_path)
-        return self.file_save_path
+        self._file_save_path = dir_path
 
     # TODO file_save_path를 받는 이유가 없음
     # TODO processing_dock은 return 값이 있을거라고 명시되어 있지 않지만 값을 return함
