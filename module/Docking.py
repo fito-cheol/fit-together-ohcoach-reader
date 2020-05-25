@@ -11,7 +11,7 @@ from ..module.CellLine import CellLine
 class Docking:
 
     def __init__(self):
-        self.each_lines_is_data_serial_num = [[0 for col in range(2)] for row in range(6)]
+        self.open_closed_serial_per_line = [[0 for col in range(2)] for row in range(6)]
         self.hub_mcu_port = get_hub_com_port(TARGET_PORT_VENDOR_ID)
         self.transmit_command_to_hub_mcu(CELL_INIT_COMMAND)
         print("Hub port = ", self.hub_mcu_port)
@@ -69,9 +69,9 @@ class Docking:
             print("---------------------Save IMU data---------------------")
             cell_line.make_imu_file(file_save_path)
             print("Code execution time :", time.time() - start)  # 현재시각 - 시작시간 = 실행 시간
-            self.each_lines_is_data_serial_num[line_process_index] = \
+            self.open_closed_serial_per_line[line_process_index] = \
                 [serial_num_list, no_data_serial_num_list]
-            print("processing_dock", self.each_lines_is_data_serial_num)
+            print("processing_dock", self.open_closed_serial_per_line)
         else:
             print("False")
             for cell_line in self.cell_line_list:
@@ -99,10 +99,10 @@ class Docking:
                 print("---------------------Save IMU data---------------------")
                 cell_line.make_imu_file(file_save_path)
                 print("Code execution time :", time.time() - start)  # 현재시각 - 시작시간 = 실행 시간
-                self.each_lines_is_data_serial_num[self.cell_line_list.index(cell_line)] = \
+                self.open_closed_serial_per_line[self.cell_line_list.index(cell_line)] = \
                     [serial_num_list, no_data_serial_num_list]
-            print("processing_dock", self.each_lines_is_data_serial_num)
-        return self.each_lines_is_data_serial_num
+            print("processing_dock", self.open_closed_serial_per_line)
+        return self.open_closed_serial_per_line
     #def get_yes_no_data_serial_num_list(self):
 
 

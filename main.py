@@ -22,7 +22,7 @@ class UserInterface:
     # TODO processing_dock은 return 값이 있을거라고 명시되어 있지 않지만 값을 return함
     #      기능이 한 함수에 여러개가 들어가있으므로 분리할 것 - processing_dock, get_dock_status
     def processing_dock(self, line_process_index):
-        each_lines_is_data_serial_num = self.docking.processing_dock(self._file_save_path, line_process_index)
+        open_closed_serial_per_line = self.docking.processing_dock(self._file_save_path, line_process_index)
         # TODO 읽은 line과 안 읽은 line의 결과 값의 형식이 다름
         #
         '''
@@ -40,10 +40,7 @@ class UserInterface:
               
         '''
         # TODO 실제로 돌려보기전에 어떤 값이 return이 될지 예상할 수 있도록 주석이 필요
-        # TODO each_lines_is_data_serial_num이라는 이름은
-        #      is~~가 들어가기 때문에 boolean값을 return할것으로 예상되지만 그렇지 않음
-        #      주석 먼저 달고나서 그에 맞게 이름을 고칠 필요가 있음
-        return each_lines_is_data_serial_num
+        return open_closed_serial_per_line
 
     def off_dock(self):
         self.docking.off_dock()
