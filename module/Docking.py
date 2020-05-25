@@ -61,7 +61,6 @@ class Docking:
 
             cell_line.make_filename()
             print("Main filename = ", cell_line.filename_list)
-            print("processing_dock = ", file_save_path)
             start = time.time()
             print("---------------------Save GPS data---------------------")
             cell_line.make_gp_file(file_save_path)
@@ -91,7 +90,6 @@ class Docking:
 
                 cell_line.make_filename()
                 print("Main filename = ", cell_line.filename_list)
-                print("processing_dock = ", file_save_path)
                 start = time.time()
                 print("---------------------Save GPS data---------------------")
                 cell_line.make_gp_file(file_save_path)
@@ -102,8 +100,6 @@ class Docking:
                 self.open_closed_serial_per_line[self.cell_line_list.index(cell_line)] = \
                     [serial_num_list, no_data_serial_num_list]
             print("processing_dock", self.open_closed_serial_per_line)
-        return self.open_closed_serial_per_line
-    #def get_yes_no_data_serial_num_list(self):
 
 
     def off_dock(self):

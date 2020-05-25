@@ -19,17 +19,17 @@ class UserInterface:
         create_dir_if_not_exists(dir_path)
         self._file_save_path = dir_path
 
-    # TODO processing_dock은 return 값이 있을거라고 명시되어 있지 않지만 값을 return함
-    #      기능이 한 함수에 여러개가 들어가있으므로 분리할 것 - processing_dock, get_dock_status
     def processing_dock(self, line_process_index):
-        open_closed_serial_per_line = self.docking.processing_dock(self._file_save_path, line_process_index)
+        self.docking.processing_dock(self._file_save_path, line_process_index)
         '''
               문제2
               CLBX-24434를 읽었었는데 결과값으로 5가 나왔음 시리얼번호가 맞는지 확인  
               
         '''
-        # TODO 실제로 돌려보기전에 어떤 값이 return이 될지 예상할 수 있도록 주석이 필요
-        return open_closed_serial_per_line
+
+    # TODO 실제로 돌려보기전에 어떤 값이 return이 될지 예상할 수 있도록 주석이 필요
+    def get_open_closed_serial(self):
+        return self.docking.open_closed_serial_per_line
 
     def off_dock(self):
         self.docking.off_dock()
@@ -73,10 +73,6 @@ if __name__ == '__main__':
     pprint.pprint(each_lines_is_data_serial_num)
 
     objectUI.off_dock()
-
-
-
-
 
 
 
