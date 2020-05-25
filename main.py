@@ -19,8 +19,6 @@ class UserInterface:
         print(self.file_save_path)
         return self.file_save_path
 
-    def processing_dock(self, file_save_path, line_process_index):
-        each_lines_is_data_serial_num = self.docking.processing_dock(file_save_path, line_process_index)
     # TODO file_save_path를 받는 이유가 없음
     # TODO processing_dock은 return 값이 있을거라고 명시되어 있지 않지만 값을 return함
     #      기능이 한 함수에 여러개가 들어가있으므로 분리할 것 - processing_dock, get_dock_status
