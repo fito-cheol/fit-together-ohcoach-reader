@@ -11,11 +11,10 @@ class UserInterface:
         self.docking = Docking()
         self.file_save_path = []
 
-    # TODO parameter가 2개일 필요 없음 1개 쓸 것
     # TODO return 값이 필요없는 함수
-    def get_file_data_path(self, path, name):
-        create_dir_if_not_exists(path, name)
-        self.file_save_path.append(path + name)
+    def get_file_data_path(self, dir_path):
+        create_dir_if_not_exists(dir_path)
+        self.file_save_path.append(dir_path)
         print(self.file_save_path)
         return self.file_save_path
 
@@ -51,11 +50,11 @@ class UserInterface:
 
 
 # TODO 사용자가 지정한 directory를 쓸거라 필요없어질 Method
-def create_dir_if_not_exists(path, name):
+def create_dir_if_not_exists(dir_path):
     print("Check data directory")
-    print(path + name)
-    if not os.path.isdir(path + name):
-        os.mkdir(path + name)
+    print(dir_path)
+    if not os.path.isdir(dir_path):
+        os.mkdir(dir_path)
 
 
 if __name__ == '__main__':
