@@ -19,11 +19,10 @@ class UserInterface:
         create_dir_if_not_exists(dir_path)
         self._file_save_path = dir_path
 
-    # TODO file_save_path를 받는 이유가 없음
     # TODO processing_dock은 return 값이 있을거라고 명시되어 있지 않지만 값을 return함
     #      기능이 한 함수에 여러개가 들어가있으므로 분리할 것 - processing_dock, get_dock_status
-    def processing_dock(self, file_save_path, line_process_index):
-        each_lines_is_data_serial_num = self.docking.processing_dock(file_save_path, line_process_index)
+    def processing_dock(self, line_process_index):
+        each_lines_is_data_serial_num = self.docking.processing_dock(self._file_save_path, line_process_index)
         # TODO 읽은 line과 안 읽은 line의 결과 값의 형식이 다름
         #
         '''
