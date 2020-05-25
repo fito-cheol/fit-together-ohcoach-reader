@@ -10,6 +10,7 @@ class UserInterface:
     def __init__(self):
         self.docking = Docking()
         self.file_save_path = []
+        # TODO path가 왜 string이 아니라 list인가
 
     # TODO return 값이 필요없는 함수
     def get_file_data_path(self, dir_path):
