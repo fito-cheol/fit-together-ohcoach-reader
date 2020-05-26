@@ -10,13 +10,14 @@ class UserInterface:
     def __init__(self):
         self.docking = Docking()
         self._file_save_path = os.path.dirname(os.path.abspath(__file__)) + '/data'
-        create_dir_if_not_exists(self._file_save_path)
+        self.create_dir_if_not_exists(self._file_save_path)
 
     def get_file_data_path(self):
         return self._file_save_path
 
     def set_file_save_path(self, dir_path):
-        create_dir_if_not_exists(dir_path)
+
+        self.create_dir_if_not_exists(dir_path)
         self._file_save_path = dir_path
 
     def processing_dock(self, line_process_index):
@@ -24,7 +25,6 @@ class UserInterface:
         '''
               문제2
               CLBX-24434를 읽었었는데 결과값으로 5가 나왔음 시리얼번호가 맞는지 확인  
-              
         '''
 
     # TODO 실제로 돌려보기전에 어떤 값이 return이 될지 예상할 수 있도록 주석이 필요
@@ -34,13 +34,10 @@ class UserInterface:
     def off_dock(self):
         self.docking.off_dock()
 
-
-# TODO 사용자가 지정한 directory를 쓸거라 필요없어질 Method
-def create_dir_if_not_exists(dir_path):
-    print("Check data directory")
-    print(dir_path)
-    if not os.path.isdir(dir_path):
-        os.mkdir(dir_path)
+    @staticmethod
+    def create_dir_if_not_exists(dir_path):
+        if not os.path.isdir(dir_path):
+            os.mkdir(dir_path)
 
 
 if __name__ == '__main__':
