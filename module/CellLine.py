@@ -78,18 +78,16 @@ class CellLine:
         return self.serial_num_list, self.no_data_serial_num_list
 
     def make_gp_file(self, file_save_path):
-        print(len(self.yes_data_port_list))
-        for i in range(len(self.yes_data_port_list) - 1):
-            file_save_path.append(file_save_path[0])
-        print(file_save_path)
+        file_save_path_list = [file_save_path] * len(self.yes_data_port_list)
         with concurrent.futures.ThreadPoolExecutor() as executor:
             executor.map(partial(self.read_and_save_gps_data), self.yes_data_port_list,
-                         file_save_path, self.filename_list)
+                         file_save_path_list, self.filename_list)
 
     def make_imu_file(self, file_save_path):
+        file_save_path_list = [file_save_path] * len(self.yes_data_port_list)
         with concurrent.futures.ThreadPoolExecutor() as executor:
             executor.map(partial(self.read_and_save_imu_data), self.yes_data_port_list,
-                         file_save_path, self.filename_list)
+                         file_save_path_list, self.filename_list)
 
     @staticmethod
     def read_and_save_gps_data(port, file_save_path, filename):
